@@ -1,0 +1,27 @@
+;9.Implementar en assembly un contador de los 1’s presentes en un registro.
+;Comprobarlo en la placa.
+;=============================================================
+; Constantes
+;=============================================================
+CONSTANT leds_out		, 01    ; LED write port
+CONSTANT switch_in		, 00    ; Switchs read port
+CONSTANT clear_all		, 00	; Limpieza
+
+;=============================================================
+; Codigo assembly principal
+;=============================================================
+main:       LOAD    s0, clear_all   
+            LOAD    s1, clear_all   
+            LOAD    s2, clear_all   
+; Cargo valores para contar 1's
+            LOAD    s0, 99          ; Cargo 0x99 a s0 (1001 1001)
+            LOAD    s1, 08          ; Cargo 0x08 a s1 para poder iterar
+; Entro a un ciclo for para contar los 1's
+for:        RL      s0              ; Roto el registro s1, bit 7 se copia en Carry
+            JUMP    NC, nocount     ; Si C == 0, salto a 'nocount'
+            ADD     s2, 01          ; Adiciono 0x01 a s2
+nocount:    SUB     s1, 01          ; Si C != 0, resto 0x01 a s1
+            JUMP    Z,  salgo       ; Si s1 == 0, salto a 'salgo'
+            JUMP    for             ; Si s1 != 0, salto a 'for'
+            ; Muestro resultado en LEDs
+salgo:      OUTPUT  s2, leds_out

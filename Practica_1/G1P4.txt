@@ -1,0 +1,56 @@
+;================================================================
+;4. Implementar en assembly la suma de dos números de 16 bits. Comprobarlo en la placa
+
+;PREREQUISITOS : switches off
+;Cuando switches off te muestra LSB, con algun switch on te muestra MSB
+;================================================================
+
+CONSTANT leds_out         , 01    ; LED write port
+CONSTANT switch_in        , 00    ; Switch read port
+
+;================================================================
+
+CONSTANT all_clear      , 00    ; define zero
+CONSTANT a_msb			, 01  
+CONSTANT a_lsb			, 4A   	; a = 14A dec(330)
+CONSTANT b_msb			, 0E	
+CONSTANT b_lsb			, 32	; b = E32 dec(3634)	 
+
+JUMP main
+
+;================================================================
+; Subrutinas
+;================================================================
+			
+switch_rd: INPUT s2, switch_in
+		   COMPARE s2, 00  		;si es True Z = 1 
+		   RETURN NZ			;solo cuando s2 distinto de cero (Z=0) retornar
+		   JUMP switch_rd
+ 
+;================================================================
+; Inicio del codigo assembly principal
+;================================================================
+main:
+ 
+ LOAD s0, a_lsb 		; rename register s0 as “a_lsb”
+ LOAD s1, a_msb 		; rename register s1 as “a_msb”
+ LOAD s2, b_lsb 		; rename register s2 as “b_lsb”
+ LOAD s3, b_msb 		; rename register s3 as “b_lsb”
+ 
+ 
+ ADD s0 , s2 			; add LSBs, keep result in s0 ( a_lsb)
+ ADDCY s1, s3 			; add MSBs, keep result in s1 (a_msb)
+
+;Resultado = a + b = 0F7C dec(3964) y bin(00001111 01111100)  
+ 
+OUTPUT s0, leds_out		; saca por leds suma de lsb , en este caso bin(01111100)
+
+CALL switch_rd			; IMPORTANTE: levantar un switch para ver el valor MSB.
+
+OUTPUT s1, leds_out		; saca por leds suma de msb , en este caso bin(00001111)
+
+;================================================================
+;
+;================================================================
+
+

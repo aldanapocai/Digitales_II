@@ -1,0 +1,40 @@
+;================================================================
+;5.Implementar en assembly un desplazador a izquierda en función del estado de los switches. 
+;================================================================
+
+CONSTANT leds_out         , 01    ; LED write port
+CONSTANT switch_in        , 00    ; Switch read port
+CONSTANT all_clear        , 00    ; define zero
+
+JUMP main
+
+;================================================================
+; Subrutinas
+;================================================================
+;espera un cambio en switch_in			
+switch_rd: INPUT s2, switch_in
+		   COMPARE s2, 00  		;si es True Z = 1 
+		   RETURN NZ			;solo cuando s2 distinto de cero (Z=0) retornar
+		   JUMP switch_rd
+
+;Bucle que salta 1,2,4 u 8 segun estado de los switches
+bucle_izq: SL0 s1
+		   OUTPUT s1, leds_out
+		   SUB s2, 01
+		   COMPARE S2, 00
+		   RETURN Z			;solo cuando s2 es cero (Z=1) retornar
+		   JUMP bucle_izq
+		   
+;================================================================
+; Inicio del codigo assembly principal
+;================================================================
+
+		LOAD	s0, all_clear	; zero out reg s0
+		LOAD	s1, all_clear	; zero out reg s1
+		LOAD	s2, all_clear	; zero out reg s2
+main: 	LOAD 	s1, 02
+		OUTPUT 	s1, leds_out 	; inicializo en 2, podria ser en cualquier otro valor 
+		CALL switch_rd 
+		CALL bucle_izq
+		
+		

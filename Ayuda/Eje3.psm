@@ -1,0 +1,16 @@
+; Implementar en assembly la suma de dos números de 8 bits.
+;Comprobarlo en la placa.
+;=============================================================
+; Constantes
+;=============================================================
+CONSTANT leds_out     , 01    ; LED write port
+CONSTANT all_clear    , 00    ; Ceros
+
+;=============================================================
+; Codigo assembly principal
+;=============================================================
+main:   LOAD    s2, 03          ; Cargo 0010 0000 al registro s2
+        LOAD    s3, 39          ; Cargo 0000 0100 al registro s3
+        ADD     s2, s3          ; Sumo registros s2 y s3, cargo en s2
+        OUTPUT  s2, leds_out    ; Encienden LEDs segun registro s2
+        JUMP    main            ; Vuelvo a main

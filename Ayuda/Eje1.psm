@@ -1,0 +1,15 @@
+; Implementar en assembly un código que permita sacar por los leds un valor
+;de 8 bits. Comprobarlo en la placa.
+;=============================================================
+; Constantes
+;=============================================================
+CONSTANT leds_out     , 01    ; LED write port
+CONSTANT all_clear    , 00    ; Ceros
+
+;=============================================================
+; Codigo assembly principal
+;=============================================================
+main:   LOAD    s0, all_clear   ; Cargo ceros al registro s0
+        LOAD    s1, FF          ; Cargo 1111 1111 al registro s1
+        OUTPUT  s1, leds_out    ; Encienden LEDs segun registro s1
+        JUMP    main            ; Vuelvo a main

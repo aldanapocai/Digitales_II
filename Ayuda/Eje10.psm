@@ -1,0 +1,23 @@
+; 10. Implementar en assembly un intercambiador entre la posición baja y alta de un registro.
+;Comprobarlo en la placa.
+
+;=============================================================
+CONSTANT leds_out		, 01    ; LED write port
+CONSTANT sw_in			, 00    ; Switchs read port
+CONSTANT clear_all		, 00	; Limpieza
+
+;=============================================================
+; Codigo assembly principal
+;=============================================================
+main:       LOAD    s0, clear_all   
+            LOAD    s1, clear_all   
+			
+            LOAD    s0, 81          ; numero a intercambiar posiciones 
+            LOAD    s1, 04          ; 0100 para iterar
+			
+            ; Entro a un ciclo for para intercambiar
+for:        RL      s0              ; Roto el registro s1
+            SUB     s1, 01          ; Hago s1 -= 1
+            JUMP    NZ, for         ; Si s0 != 0, hago otro ciclo
+ 
+            OUTPUT  s0, leds_out    ; Registro s0 intercambiado (18) (10010)

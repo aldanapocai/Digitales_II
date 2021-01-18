@@ -1,0 +1,33 @@
+; Implementar en assembly un desplazador a izquierda en función del
+;estado de los switches
+;=============================================================
+; Constantes
+;=============================================================
+CONSTANT leds_out		, 01    ; LED write port
+CONSTANT sw_in			, 00    ; Switchs read port
+CONSTANT clear_all		, 00	; Limpieza
+
+;=============================================================
+; Codigo assembly principal
+;=============================================================
+			LOAD	s3, clear_all	; Limpio registro s3
+			LOAD	s3, 01			; Cargo 01 a s3
+main:		INPUT	s4, sw_in		; Leo estados de los switchs
+			AND		s4, 0F			; Aplico mascara para quedarme con los bits - significativos
+			COMPARE	s4, 00			; Comparo. Si s4 == 00, Z = 1
+			JUMP	Z, main			; Si Z = 1, vuelvo a main
+			RL		s3				; Muevo bits hacia la izquierda
+			CALL	delay_1s		; Rutina de demora
+			OUTPUT	s3, leds_out	; Veo registro s3 en leds
+			JUMP	main			; Vuelvo a main
+
+delay_1s: 	LOAD s2, 7D
+ 			LOAD s1, E2
+ 			LOAD s0, 90
+delay_loop: SUB s0, 1'd
+ 			SUBCY s1, 0'd
+ 			SUBCY s2, 0'd
+ 			JUMP NZ, delay_loop
+ 			return 
+
+; FUNCIONA :D

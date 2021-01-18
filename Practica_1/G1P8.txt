@@ -1,0 +1,54 @@
+;=============================================================
+;8. ¿En caso de admitir 16 bits como salida, cómo escribiría el código? 
+
+; Se asume que de admitir 16 bits como salida, los registros sX almacenan hasta 16 bits pero los leds de la placa siguen siendo 8. 
+;Con estos supuestos se propone el siguiente codigo:
+
+;=============================================================
+CONSTANT leds_out		, 01    ; LED write port
+CONSTANT switch_in		, 00    ; Switchs read port
+CONSTANT clear_all		, 00	; clear_all
+
+JUMP main
+
+;=============================================================
+;SUBRUTINAS
+;=============================================================
+delay_1s: 	LOAD s6, 7D
+ 			LOAD s5, E2
+ 			LOAD s4, 90
+delay_loop: SUB s6, 1'd
+ 			SUBCY s5, 0'd
+ 			SUBCY s4, 0'd
+ 			JUMP NZ, delay_loop
+ 			return 
+			
+			
+show_16: LOAD	 s3, s2
+		 AND 	 s2, FF00				;mascara para MSB 11111111 00000000
+		 AND 	 s3, 00FF				;mascara para LSB 00000000 11111111
+		 OUTPUT  s2, leds_out  			;se muestra MSBs del resultado
+		 CALL 	 delay_1s
+		 CALL 	 delay_1s
+		 CALL 	 delay_1s
+		 OUTPUT  s3, leds_out			;luego de 3 seg se muestra LSBs del resultado
+		
+		
+
+;=============================================================
+;Codigo assembly principal
+;=============================================================
+main:       LOAD    s0, clear_all   
+            LOAD    s1, clear_all	
+			LOAD    s2, clear_all   				
+
+;Valores a multiplicar
+
+            LOAD    s0, 1E         ;dec(30) 
+            LOAD    s1, 0A         ;dec(10) 
+
+suma:       ADDCY     s2, s1          
+            SUB     s0, 01          
+            JUMP    NZ, suma        ; Si Z = 0 (s0 != 0), vuelvo a sumar
+			JUMP 	 C, show_16		; Si C = 1 (resultado > 256 ) En este caso dec(300)  00101100 y Carry =1  
+            OUTPUT  s2, leds_out    ; Resultado de s2 = s0 * s1 

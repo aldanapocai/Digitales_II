@@ -1,0 +1,17 @@
+; Implementar en assembly un código que permita sacar por 4 leds el estado
+;de los switches. Comprobarlo en la placa.
+;=============================================================
+; Constantes
+;=============================================================
+CONSTANT leds_out     , 01    ; LED write port
+CONSTANT sw_in        , 00    ; Switch read port
+CONSTANT all_clear    , 00    ; Ceros
+
+;=============================================================
+; Codigo assembly principal
+;=============================================================
+main:   LOAD    s0, all_clear   ; Cargo ceros al registro s0
+        INPUT   s2, sw_in       ; Leo estado de los switchs
+        LOAD    s1, s2          ; Cargo registro s2 al registro s1
+        OUTPUT  s1, leds_out    ; Encienden LEDs segun registro s1
+        JUMP    main            ; Vuelvo a main

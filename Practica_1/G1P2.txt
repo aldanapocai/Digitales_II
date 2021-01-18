@@ -1,0 +1,22 @@
+;================================================================
+;2. Implementar en assembly un código que permita sacar por 4 leds el estado de los switches.
+;Comprobarlo en la placa.
+;================================================================
+
+CONSTANT leds_out         , 01    ; LED write port
+CONSTANT switch_in        , 00    ; Switch read port
+
+;================================================================
+
+CONSTANT all_clear        , 00    ; define zero
+
+;================================================================
+; Inicio del codigo assembly principal
+;================================================================
+
+main:	INPUT	s2, switch_in
+		OUTPUT	s2, leds_out	; write it to leds
+
+;================================================================
+;
+;================================================================

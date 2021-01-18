@@ -1,0 +1,46 @@
+;================================================================
+;Implementar en assembly un desplazador a izquierda en función del estado de los switches. 
+;================================================================
+
+CONSTANT leds_out         , 01    ; LED write port
+CONSTANT switch_in        , 00    ; Switch read port
+CONSTANT all_clear        , 00    ; define zero
+CONSTANT n_1              , 01
+
+;JUMP main,
+
+
+;================================================================
+; Inicio del codigo assembly principal
+;================================================================
+main:	LOAD s0 , all_clear
+		LOAD s1, n_1
+		OUTPUT S1, leds_out
+		CALL delay_1s
+bucle:	CALL shft_left		;si Z=0 el jump no se ejecuta y llama a subrutina mover izq
+		CALL delay_1s
+		JUMP bucle
+		
+		; COMPARE S2, 02		;si s2<01 
+		; JUMP NZ, bucle
+		; CALL shft_left		; subrutina mover izq
+		; CALL shft_left		; subrutina mover izq
+		; JUMP bucle		
+		
+		; COMPARE S2, 03		;si s2<01 
+		; JUMP NZ, bucle
+		; CALL shft_left		; subrutina mover izq
+		; CALL shft_left		; subrutina mover izq
+		; CALL shft_left		; subrutina mover izq
+		; JUMP bucle
+		
+;================================================================
+; Subrutinas
+;================================================================
+delay_1s:	LOAD S3, 4A
+			; LOAD S4, FE
+			; LOAD S5, 06
+
+shft_left: SL0 s1, 					;	shift left 1-bit
+		   OUTPUT s1, leds_out
+		   RETURN 

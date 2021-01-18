@@ -1,0 +1,25 @@
+;================================================================
+;3. Implementar en assembly la suma de dos números de 8 bits. Comprobarlo en la placa. 
+;================================================================
+
+CONSTANT leds_out         , 01    ; LED write port
+CONSTANT switch_in        , 00    ; Switch read port
+
+;================================================================
+
+CONSTANT all_clear        , 00    ; define zero
+CONSTANT n_1			  , 0F
+CONSTANT n_2			  , 02
+
+;================================================================
+; Inicio del codigo assembly principal
+;================================================================
+
+main:	LOAD	s1, n_1	; carga el 15 en hex en el registro S0
+		LOAD	s2, n_2 
+		ADD s2, s1 			; suma s1 y s2 y lo guarda en s2
+		OUTPUT	s2, leds_out	; write it to leds: 10001 (dec(17) o hex(11) lo escribe en binario en los leds)
+
+;================================================================
+;
+;================================================================

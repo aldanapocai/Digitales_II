@@ -1,0 +1,25 @@
+;Implementar en assembly un multiplicador con operandos de 8 bits utilizando instrucciones de
+;salto (tener en cuenta que el resultado debe ser tal que no supere los 8 bits). Comprobarlo en la
+;placa.
+;=============================================================
+; Constantes
+;=============================================================
+CONSTANT leds_out		, 01    ; LED write port
+CONSTANT sw_in			, 00    ; Switchs read port
+CONSTANT clear_all		, 00	; Limpieza
+
+;=============================================================
+; Codigo assembly principal
+;=============================================================
+main:       LOAD    s0, clear_all   ; Limpio registro s0
+            LOAD    s1, clear_all   ; Limpio registro s1
+            LOAD    s2, clear_all   ; Limpio registro s3
+            ; Cargo valores a multiplicar
+            LOAD    s0, 03          ; Cargo 0x03 a s0
+            LOAD    s1, 03          ; Cargo 0x03 a s1
+            ; Entro a un ciclo while para multiplicar
+suma:       ADD     s2, s1          ; s2 += s1
+            SUB     s0, 01          ; s0 -= 01
+            JUMP    NZ, suma        ; Si Z = 0 (o sea, s0 != 0), vuelvo a sumar
+            ; Muestro resultado en los LEDS
+            OUTPUT  s2, leds_out    ; Resultado de s2 = s0 * s1
