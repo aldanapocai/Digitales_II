@@ -1,11 +1,10 @@
 ;6. Implementar en assembly un multiplicador con operandos de 8 bits SIN utilizar instrucciones de
 ;salto (tener en cuenta que el resultado debe ser tal que no supere los 8 bits). Comprobarlo en la
 ;placa.
-;=============================================================
 
 ;=============================================================
 CONSTANT leds_out		, 01    ; LED write port
-CONSTANT sw_in			, 00    ; Switchs read port
+CONSTANT switch_in		, 00    ; Switches read port
 CONSTANT clear_all		, 00	; Limpieza
 
 ;=============================================================
@@ -14,9 +13,9 @@ CONSTANT clear_all		, 00	; Limpieza
 
 main:       LOAD    s0, clear_all    
 			LOAD    s1, clear_all   
-            LOAD    s0, 02          ; Cargo 2 en s0
+            LOAD    s0, 07          ; Cargo 7 en s0
             ADD     s1, s0			; s1 += s0
             ADD     s1, s0			; s1 += s0
             ADD     s1, s0			; s1 += s0
             ADD     s1, s0			; s1 += s0			
-            OUTPUT  s1, leds_out	; resultado 8 (2x4)
+            OUTPUT  s1, leds_out	; resultado 28 (7x4)

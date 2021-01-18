@@ -8,8 +8,8 @@ CONSTANT switch_in        , 00    ; Switch read port
 ;================================================================
 
 CONSTANT all_clear        , 00    ; define zero
-CONSTANT n_1			  , 0F
-CONSTANT n_2			  , 02
+CONSTANT n_1			  , 0F	  ; 15'd 
+CONSTANT n_2			  , 02	  ; 2'd
 
 ;================================================================
 ; Inicio del codigo assembly principal
