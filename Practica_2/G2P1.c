@@ -8,6 +8,7 @@ int main() {
     float floatType;
     double doubleType;
     char charType;
+	short int short_intType;
 	
 	printf("Tamanios de distintos tipos de datos.\n");
 	printf("------------------------------------\n");
@@ -15,7 +16,8 @@ int main() {
 	printf("Un float tiene %d bytes.\n", sizeof(floatType));	
 	printf("Un double tiene %d bytes.\n", sizeof(doubleType));	
 	printf("Un char tiene %d bytes.\n", sizeof(charType));	
-	
+	printf("Un short int tiene %d bytes.\n", sizeof(short_intType));
+
 	return 0;
 	
 	
