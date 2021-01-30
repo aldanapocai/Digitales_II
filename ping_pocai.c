@@ -393,10 +393,10 @@ int main(void)
 			};
 			break;
 		case rxpkt_dmacpied:
-			switch (
+			switch (													//// Distingue entre si es un paquete ARP o IP. 
 				(((struct eth_hdr *) buffer)->type[0] << 8) |
 				(((struct eth_hdr *) buffer)->type[1] << 0)) {
-			case ETHTYP_ARP:
+			case ETHTYP_ARP:	
 				if ((loglevel & SERVER_LOG) > 0) {
 					xil_printf("GRATUITOUS ARP reply to : MAC => ");
 					print_mac(((struct arp_frm *) buffer)->eth_hdr.src);
@@ -416,8 +416,8 @@ int main(void)
 				break;
 			case ETHTYP_IP:
 
-				if (!memcmp(my_ipv4, ((struct icmp_frm *) buffer)->ipv4_hdr.da, sizeof(my_ipv4)) &&
-					((struct icmp_frm *) buffer)->ipv4_hdr.proto[0] == icmp_proto) {
+				if (!memcmp(my_ipv4, ((struct icmp_frm *) buffer)->ipv4_hdr.da, sizeof(my_ipv4)) &&		//// Verifico que la direccion de destino del paquete
+					((struct icmp_frm *) buffer)->ipv4_hdr.proto[0] == icmp_proto) {					//// sea la propia. 
 
 					chksum = 0;
 					chksum |= ((struct icmp_frm *) buffer)->icmp_hdr.chksum[0];
@@ -455,7 +455,7 @@ int main(void)
 						((struct icmp_frm *) buffer)->ipv4_hdr.da[i] = aux;
 					}
 					((struct icmp_frm *) buffer)->icmp_hdr.type[0] = 0x00;
-
+ 
 					if ((loglevel & SERVER_LOG) > 0) {
 						xil_printf("ICMP reply to : MAC => ");
 						print_mac(((struct icmp_frm *) buffer)->eth_hdr.dest);
@@ -503,25 +503,38 @@ int main(void)
 
 
 }
-
-void setup_ethctlr()
+//// Documentacion para las siguientes dos funciones: pg135-xi-ethernetlite. /////
+void setup_ethctlr() ////Inicializacion del controlador de Ethernet
 {
-	eth_ctlr->tx_ping_data[0] = *(((int *) my_mac)+0);
-	eth_ctlr->tx_ping_data[1] = *(((int *) my_mac)+1);
+	eth_ctlr->tx_ping_data[0] = *(((int *) my_mac)+0); 			//// Ingresa la direccion MAC del dispositivo en los dos primeros bytes
+	eth_ctlr->tx_ping_data[1] = *(((int *) my_mac)+1);			//// del registro tx_ping_data. Pag 29. 
 
-	eth_ctlr->tx_ping_control |= (0x2 | 0x1);
-	while(eth_ctlr->tx_ping_control & (0x2 | 0x1));
+	eth_ctlr->tx_ping_control |= (0x2 | 0x1); 					//// Programa: utilizando una mascara en el registro Transmit 
+																//// Control Register (Ping) (0x40e007FC), selecciona los dos ultimos bits 
+																//// (0,1) comenzando la transmision. Pag 19. 
 
-	eth_ctlr->gie |= (1 << 31); // Global Interrupt Enable 
-	eth_ctlr->rx_ping_control |= ((1<< 3));
+	while(eth_ctlr->tx_ping_control & (0x2 | 0x1));				//// Espera que la programacion termine. (0x40e007FC). 
+
+	eth_ctlr->gie |= (1 << 31); // Global Interrupt Enable  	//// Habilita las interrupciones generales con el registro 
+																//// GIE (0x40e007F8). Pag 18. 
+
+	eth_ctlr->rx_ping_control |= ((1<< 3));						//// Habilita las interrupciones de recepcion mediante el registro
+																//// Receive control register for ping buffer (0x40e017FC). Pag 21. 
 }
 
-void eth_tx(size_t len)
+void eth_tx(size_t len)		//// Transmision por ethernet
 {
-	while(eth_ctlr->tx_ping_control & (0x2 | 0x1));
+	while(eth_ctlr->tx_ping_control & (0x2 | 0x1));				//// Se asegura que no haya paquetes transmitiendose, al mirar los 
+																//// bits 1 y 2 del registro Transmit Control Register (Ping) (0x40e007FC)
+																////Pag 19. 
 
-	eth_ctlr->tx_ping_length  = len; 
-	eth_ctlr->tx_ping_control |= ((1<< 3) | (1 << 0));
+	eth_ctlr->tx_ping_length  = len; 							//// Ingresa la cantidad de datos a transmitir en el registro
+																//// Transmit length register for ping buffer (0x40e007F4). 
+
+	eth_ctlr->tx_ping_control |= ((1<< 3) | (1 << 0));			//// Habilita la interrupcion, registro (0x40e007FC)
+																//// para que avise cuando deje de transmitir y comienza a transmitir.
+																////Pag 19. 
+
 
 	if (loglevel & ETH_LOG) xil_printf("eth_ctlr->tx_ping_control 0x%08x\n\r", eth_ctlr->tx_ping_control);
 	if (loglevel & ETH_LOG) xil_printf("eth_ctlr->tx_ping_length  0x%08x\n\r", eth_ctlr->tx_ping_length);
