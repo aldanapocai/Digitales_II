@@ -12,6 +12,7 @@ int main(void){
  // printf("\nDireccion asignada para la variable c:\t %p\n", &c);	 //060FF16 0X16 22'd
 
 
+
 /*a) Analizar los valores de salida y marcar en el gráfico siguiente (esquema de la memoria) las
 ubicaciones asignadas a cada variable (las posiciones de memoria son descendientes de
 arriba hacia abajo). 
