@@ -532,8 +532,8 @@ void eth_tx(size_t len)		//// Transmision por ethernet
 																//// Transmit length register for ping buffer (0x40e007F4). 
 
 	eth_ctlr->tx_ping_control |= ((1<< 3) | (1 << 0));			//// Habilita la interrupcion, registro (0x40e007FC)
-																//// para que avise cuando deje de transmitir y comienza a transmitir.
-																////Pag 19. 
+																//// para que avise cuando deje de transmitir y  pueda 
+																////dar comienzo a una nueva transmision. Pag 19. 
 
 
 	if (loglevel & ETH_LOG) xil_printf("eth_ctlr->tx_ping_control 0x%08x\n\r", eth_ctlr->tx_ping_control);
@@ -572,11 +572,12 @@ void setup_intctlr(void)
 	Xil_ExceptionEnable();
 
 	intp_ctlr->ier |= IE_MASK; ////Habiltacion del paso de las interrupciones, 
-							   ////provenientes de los perifericos ethernet y dma, al procesador. Pag 18.  
+							   ////provenientes de los perifericos ethernet y dma, al procesador.
+							   //// utilizando registro IER (0x41200008) Pag 18.  
 	
 	if (loglevel & INTC_LOG) xil_printf("intp_ctlr->ier 0x%08x\n\r", intp_ctlr->ier);
 
-	intp_ctlr->mer |= (0x2 | 0x01); //// Setea en 1 al Hardware Interrupt Enable (HIE) bit, 
+	intp_ctlr->mer |= (0x2 | 0x01); //// Setea en 1 al Hardware Interrupt Enable (HIE) bit de MER (0x4120001C), 
 									////habilitando las interrupciones por hardware. Pag 23.
 
 }
@@ -592,8 +593,8 @@ void dmacpy(void volatile *dst, const void volatile *src, size_t len)
 	while(!(dma_ctlr->cdmasr & DMA_SRMSK_IDLE)); //// Mientras que hayan finalizado las transferencias programadas,
 												////la CDMA espera por una nueva transferencia a realizar. Pag 22. 
 
-	dma_ctlr->cdmacr |=  DMA_CRMSK_IRQEN;  // DMA Ctlr's Enable Interrupt //// Utilizando el bit 12 del CDMACR permite que 
-																		  //// permite a CDMASR.IOC_Irq generar una interrupcion de salida para
+	dma_ctlr->cdmacr |=  DMA_CRMSK_IRQEN;  // DMA Ctlr's Enable Interrupt //// Utilizando el bit 12 del CDMACR permite 
+																		  //// a CDMASR.IOC_Irq generar una interrupcion de salida para
 																		  //// transferencias DMA completadas. Pag 16. 
 	
 	dma_ctlr->cdmacr &= ~DMA_CRMSK_IRQERR; // DMA Ctlr's Disable Error Interrupt //// Utilizando el bit 14 del CDMACR deshabilita 
@@ -601,13 +602,13 @@ void dmacpy(void volatile *dst, const void volatile *src, size_t len)
 	
 
 	dma_ctlr->sa  = (int) src;			// Set DMA Source      Address  //// Ingresa la direccion de origen del paquete a transferir
-																	    //// al registro SA. Pag 27. 
+																	    //// al registro SA. Direccion absoluta: 0x44a00018. Pag 27. 
 	dma_ctlr->da  = (int) dst;			// Set DMA Destiantion Address  //// Ingresa la direccion de destino del paquete a transferir
-																		//// al registro DA. Pag 29. 
+																		//// al registro DA. Direccion absoluta: 0x44a00020. Pag 29. 
 
 	dma_ctlr->btt = len; 				// Set DMA Byte Transfer 		//// Ingresa el tamano (distinto al largo) del paquete a 
-																		//// transferir al registro BTT.Pag 31. Max de 
-																		//// transferencia: 8MB. Luego de esta instruccion 
+																		//// transferir al registro BTT. Direccion absoluta: 0x44a00028. 
+																		//// Pag 31. Max de transferencia: 8MB. Luego de esta instruccion 
 																		////la transferencia inicia inmediatamente. 
 
 }
